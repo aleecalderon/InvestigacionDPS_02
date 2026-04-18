@@ -1,7 +1,7 @@
 export const formatTemperature = (temp) => {
   return temp ? `${temp.toFixed(1)}°C` : "--°C";
 };
-
+//modificado
 export const formatHumidity = (hum) => {
   return hum ? `${hum.toFixed(1)}%` : "--%";
 };

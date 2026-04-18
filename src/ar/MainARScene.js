@@ -1,22 +1,37 @@
+// 01-frontend/src/ar/MainARScene.js
+
 import React from 'react';
-import { ViroARScene, ViroText, ViroAmbientLight, ViroFlexView } from '@viro-community/react-viro';
+import { ViroARScene, ViroText, ViroAmbientLight } from '@viro-community/react-viro';
+import DataPanelAR from '../components/DataPanelAR';
+import { useSensorData } from '../hooks/useSensorData';
 
 const MainARScene = () => {
+  // 1. Consumimos el hook: esto inicia automáticamente el setInterval de 5 segundos
+  const { temperatura, humedad, ubicacion, estado, error } = useSensorData();
+
   return (
     <ViroARScene>
+      {/* Luz ambiental básica para que los elementos se vean bien */}
       <ViroAmbientLight color="#ffffff" />
-      <ViroFlexView
-        style={{flexDirection: 'column', padding: .1}}
-        width={0.5}
-        height={0.5}
-        position={[0, 0, -1]} 
-      >
+      
+      {/* 2. Manejo de estado: Evaluamos si ocurrió un error en la API */}
+      {error ? (
+        // Si el puente con el servidor falla, mostramos un texto de alerta en rojo
         <ViroText 
-          text="Sensor IoT: Conectando..." 
+          text={`Alerta de Conexión: ${error}`} 
           scale={[0.2, 0.2, 0.2]} 
-          style={{fontFamily: 'Arial', fontSize: 30, color: '#ffffff'}}
+          position={[0, 0, -1.5]} 
+          style={{ color: '#FF0000', fontWeight: 'bold' }} 
         />
-      </ViroFlexView>
+      ) : (
+        // 3. Si la conexión es exitosa, renderizamos el panel y le pasamos los datos dinámicos
+        <DataPanelAR 
+          temperatura={temperatura}
+          humedad={humedad}
+          ubicacion={ubicacion}
+          estado={estado}
+        />
+      )}
     </ViroARScene>
   );
 };

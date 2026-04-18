@@ -1,51 +1,37 @@
+// 01-frontend/src/ar/MainARScene.js
+
 import React from 'react';
-import { ViroARScene, ViroText, ViroAmbientLight, ViroFlexView } from '@viro-community/react-viro';
+import { ViroARScene, ViroText, ViroAmbientLight } from '@viro-community/react-viro';
+import DataPanelAR from '../components/DataPanelAR';
 import { useSensorData } from '../hooks/useSensorData';
 
 const MainARScene = () => {
-  // Consumimos los datos del hook personalizado
-  const { temperatura, humedad, ubicacion, error } = useSensorData();
+  // 1. Consumimos el hook: esto inicia automáticamente el setInterval de 5 segundos
+  const { temperatura, humedad, ubicacion, estado, error } = useSensorData();
 
   return (
     <ViroARScene>
+      {/* Luz ambiental básica para que los elementos se vean bien */}
       <ViroAmbientLight color="#ffffff" />
       
-      <ViroFlexView
-        style={{ flexDirection: 'column', padding: 0.05, backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
-        width={0.8}
-        height={0.8}
-        position={[0, 0, -1]} 
-      >
+      {/* 2. Manejo de estado: Evaluamos si ocurrió un error en la API */}
+      {error ? (
+        // Si el puente con el servidor falla, mostramos un texto de alerta en rojo
         <ViroText 
-          text={error ? error : "Panel de Monitoreo IoT"} 
-          scale={[0.15, 0.15, 0.15]} 
-          style={{ fontFamily: 'Arial', fontSize: 24, color: '#00ff00' }}
+          text={`Alerta de Conexión: ${error}`} 
+          scale={[0.2, 0.2, 0.2]} 
+          position={[0, 0, -1.5]} 
+          style={{ color: '#FF0000', fontWeight: 'bold' }} 
         />
-        
-        <ViroText 
-          text={`Ubicación: ${ubicacion}`} 
-          scale={[0.12, 0.12, 0.12]} 
-          style={{ fontFamily: 'Arial', fontSize: 20, color: '#ffffff' }}
+      ) : (
+        // 3. Si la conexión es exitosa, renderizamos el panel y le pasamos los datos dinámicos
+        <DataPanelAR 
+          temperatura={temperatura}
+          humedad={humedad}
+          ubicacion={ubicacion}
+          estado={estado}
         />
-
-        <ViroText 
-          text={`Temperatura: ${temperatura}`} 
-          scale={[0.12, 0.12, 0.12]} 
-          style={{ fontFamily: 'Arial', fontSize: 20, color: '#ff5733' }}
-        />
-
-        <ViroText 
-          text={`Humedad: ${humedad}`} 
-          scale={[0.12, 0.12, 0.12]} 
-          style={{ fontFamily: 'Arial', fontSize: 20, color: '#33ccff' }}
-        />
-
-        <ViroText 
-          text="Actualizando cada 5s..." 
-          scale={[0.08, 0.08, 0.08]} 
-          style={{ fontFamily: 'Arial', fontSize: 16, color: '#aaaaaa', textAlign: 'center' }}
-        />
-      </ViroFlexView>
+      )}
     </ViroARScene>
   );
 };

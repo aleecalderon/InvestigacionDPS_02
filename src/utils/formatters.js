@@ -7,7 +7,7 @@ export const formatHumidity = (hum) => {
 };
 
 /**
- * Muestra la hora de la actualización dinámica [cite: 9]
+ * Muestra la hora de la actualización dinámica 
  */
 export const formatLastUpdate = (date) => {
   if (!date) return "Sin datos";

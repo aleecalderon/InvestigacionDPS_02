@@ -30,7 +30,7 @@ export default function App() {
         initialScene={{ scene: MainARScene }}
         style={styles.arView}
         // ESTA LÍNEA ES LA CLAVE: 
-        // Envía tus datos a la escena de tu compañera sin modificar su archivo
+        // Envía tus datos sin modificar su archivo
         viroAppProps={{ sensorData }} 
       />
 

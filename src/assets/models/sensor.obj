@@ -1,0 +1,31 @@
+import NetInfo from "@react-native-community/netinfo";
+import { Alert } from "react-native";
+
+// Función para monitorear la conexión
+const monitorConnection = () => {
+  const unsubscribe = NetInfo.addEventListener(state => {
+    if (!state.isConnected) {
+      Alert.alert(
+        "Sin Conexión",
+        "Se ha perdido la conexión a internet. La app seguirá funcionando en modo offline.",
+        [{ text: "OK" }]
+      );
+      // Aquí puedes disparar lógica para pausar peticiones fetch
+    }
+  });
+
+  return unsubscribe;
+};
+
+// Ejemplo de un fetch "seguro"
+async function fetchData(url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Error en el servidor");
+    return await response.json();
+  } catch (error) {
+    console.log("Error controlado para que no truene:", error.message);
+    // En lugar de crash, retornamos algo vacío o un aviso
+    return null; 
+  }
+}

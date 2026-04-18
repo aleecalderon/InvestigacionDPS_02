@@ -4,34 +4,45 @@ import { fetchSensorData } from '../services/api';
 
 export const useSensorData = () => {
   const [data, setData] = useState({
-    temperatura: 'Cargando...',
-    humedad: 'Cargando...',
-    ubicacion: 'Buscando...'
+    temperatura: 0,
+    humedad: 0,
+    ubicacion: 'Cargando...',
+    estado: 'Cargando...'
   });
   const [error, setError] = useState(null);
 
-  const updateData = async () => {
-    try {
-      const result = await fetchSensorData();
-      setData(result);
-      setError(null);
-    } catch (err) {
-      setError("Fallo al sincronizar datos");
-    }
-  };
-
   useEffect(() => {
-    // Primera carga
-    updateData();
+    let isMounted = true; 
 
-    // Configuración del intervalo de 5 segundos
-    const interval = setInterval(() => {
-      updateData();
-    }, 5000);
+    const loadData = async () => {
+      try {
+        const result = await fetchSensorData();
+        if (isMounted) {
+          setData(result);
+          setError(null); // Limpiamos errores si la conexión se recupera
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError('Fallo de conexión con el servidor IoT.');
+          // Opcionalmente, puedes cambiar el estado a "Desconectado" aquí
+          setData(prev => ({ ...prev, estado: 'Desconectado' }));
+        }
+      }
+    };
 
-    // Limpieza al desmontar el componente
-    return () => clearInterval(interval);
+    // 1. Ejecutar inmediatamente al montar el componente
+    loadData();
+
+    // 2. Configurar la repetición cada 5000 milisegundos (5 segundos)
+    const intervalId = setInterval(loadData, 5000);
+
+    // 3. Limpieza: Se ejecuta si el usuario sale de la vista AR
+    return () => {
+      isMounted = false;
+      clearInterval(intervalId);
+    };
   }, []);
 
+  // Devolvemos el objeto desestructurado junto con un posible error
   return { ...data, error };
 };

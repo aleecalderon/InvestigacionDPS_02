@@ -29,8 +29,7 @@ export default function App() {
         autofocus={true}
         initialScene={{ scene: MainARScene }}
         style={styles.arView}
-        // ESTA LÍNEA ES LA CLAVE: 
-        // Envía tus datos sin modificar su archivo
+        
         viroAppProps={{ sensorData }} 
       />
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, SafeAreaView } from 'react-native';
 import { formatTemperature, formatHumidity, formatLastUpdate } from '../utils/formatters';
+//
 
 const OverlayUI = ({ data, status, onRefresh }) => {
   return (
